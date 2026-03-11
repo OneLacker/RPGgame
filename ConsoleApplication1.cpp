@@ -1,14 +1,74 @@
 ﻿#include <iostream>
 #include <string>
 #include <map>
+#include <fstream>
 
 using namespace std;
 
-bool NewGame(map<string, string>& game) {
+struct Data {
+    string name;
+    int hp;
+    int gold;
+    int gun;
+    int mobs;
+};
 
-    cout << "Придумайте имя персонажа: " << endl;
+
+void saveGame(Data data) {                         //сохранение
+    ofstream saveFile("savegame.txt");
+    if (saveFile.is_open()) {
+        saveFile << data.name << endl;
+        saveFile << data.hp << endl;
+        saveFile << data.gold << endl;
+        saveFile << data.mobs << endl;
+
+        saveFile.close();
+
+        cout << "Игра была сохранена!" << endl;
+    }
+}
+
+bool loadGame(Data &data) {                         //загрузка
+    ifstream saveFile("savegame.txt");
+
+    if (saveFile.is_open()) {
+        getline(saveFile, data.name);
+        saveFile >> data.hp;
+        saveFile >> data.gold;
+        saveFile >> data.mobs;
+
+        saveFile.close();
+
+        return true;
+
+    }
+
+    return false;
+}   
+
+
+void Status(Data data) {                                      //статус
+
+    cout <<"==============СТАТУС==============" << endl;
+    cout << "Персонаж: " << data.name << endl;
+    cout << "Здоровье: " << data.hp << endl;
+    cout << "Золото: " << data.gold << endl;
+    cout << "Убито монстров: " << data.mobs << endl;
+
+    switch (data.gun) {
+    case 1:
+        cout << "Без оружия" << endl;
+        break;
+    case 2:
+        cout << "Лук" << endl;
+        break;
+    case 3:
+        cout << "Меч" << endl;
+        break;
+    }
 
 }
+
 
 
 void PrintMenu(){
@@ -21,10 +81,9 @@ void PrintMenu(){
 }
 
 int main() {
+
+
     setlocale(LC_ALL, "ru");
-    string user;
-    map<string, string>game;
-    game[user] = "this";
     int num=0;
     while (true) {
         system("clear");
@@ -36,11 +95,11 @@ int main() {
             break;
         }
         case 2: {
-            cout << "go" << endl;
+            
             break;
         }
         case 3: {
-            cout << "Exit" << endl;
+
             break;
         }
         default:
