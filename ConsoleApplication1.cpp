@@ -10,7 +10,7 @@ struct Data {
     int hp;
     int gold;
     int gun;
-    int mobs;
+    int Killmobs;
 };
 
 
@@ -20,8 +20,8 @@ void saveGame(Data data) {                         //сохранение
         saveFile << data.name << endl;
         saveFile << data.hp << endl;
         saveFile << data.gold << endl;
-        saveFile << data.mobs << endl;
-
+        saveFile << data.Killmobs << endl;
+        saveFile << data.gun << endl;
         saveFile.close();
 
         cout << "Игра была сохранена!" << endl;
@@ -35,8 +35,8 @@ bool loadGame(Data &data) {                         //загрузка
         getline(saveFile, data.name);
         saveFile >> data.hp;
         saveFile >> data.gold;
-        saveFile >> data.mobs;
-
+        saveFile >> data.Killmobs;
+        saveFile >> data.gun;
         saveFile.close();
 
         return true;
@@ -53,23 +53,48 @@ void Status(Data data) {                                      //статус
     cout << "Персонаж: " << data.name << endl;
     cout << "Здоровье: " << data.hp << endl;
     cout << "Золото: " << data.gold << endl;
-    cout << "Убито монстров: " << data.mobs << endl;
+    cout << "Убито монстров: " << data.Killmobs << endl;
 
     switch (data.gun) {
-    case 1:
+    case 0:
         cout << "Без оружия" << endl;
         break;
-    case 2:
+    case 1:
         cout << "Лук" << endl;
         break;
-    case 3:
+    case 2:
         cout << "Меч" << endl;
         break;
     }
 
 }
 
+void battle(Data& data) {
+    int mobsHP = rand() % 50 + 30;
+    string mobs[6] = { "Слизень","Оборотень","Огр","Орк","Скелет","призрак" };
+    string mob = mobs[rand() % 6];
+    cout << "На тебя напал " << mob << endl;
 
+    while (mobsHP > 0 && data.hp > 0) {
+        cout << "Твое здоровье: " << data.hp << endl;
+        cout << "Здоровье врага: " << mobsHP << endl;
+        cout << "1.Атаковать" << endl;
+        cout << "2.Сбежать(шанс 50%)" << endl;
+        cout << "3.Выйти и сохранить" << endl;
+    }
+
+    int var;
+    cin >> var;
+    if (var == 3) {
+        saveGame(data);
+        return;
+    }
+    if (var == 1) {
+        int damage;
+
+    }
+
+}
 
 void PrintMenu(){
     cout << "|===========МЕНЮ===========|" << endl;
@@ -86,7 +111,7 @@ int main() {
     setlocale(LC_ALL, "ru");
     int num=0;
     while (true) {
-        system("clear");
+        system("cls");
         PrintMenu();
         cin >> num;
         switch (num) {
