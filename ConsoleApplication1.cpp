@@ -70,6 +70,7 @@ void Status(Data data) {                                      //статус
 }
 
 void battle(Data& data) {
+    int damage;
     int mobsHP = rand() % 50 + 30;
     string mobs[6] = { "Слизень","Оборотень","Огр","Орк","Скелет","призрак" };
     string mob = mobs[rand() % 6];
@@ -90,9 +91,55 @@ void battle(Data& data) {
         return;
     }
     if (var == 1) {
-        int damage;
+        switch (data.gun) {
+        case 0:
+            damage = rand() % 10 + 5;
+            break;
+        case 1:
+            damage = rand() % 15 + 10;
+            break;
+        case 2:
+            damage = rand() % 15 + 20;
+        }
+
+        mobsHP -= damage;
+        cout << "Ты нанес " << damage << " урона" << endl;
+    }
+    else if (var == 2) {
+        if (rand() % 2 == 0) {
+            cout << "удалось сбежать" << endl;
+            return;
+        }
+        else {
+            cout << "не удалось сбежать, бой продолжается" << endl;
+            int mobDamage = rand() % 20 + 10;
+            data.hp -= mobDamage;
+            cout << "Ты получил " << mobDamage << " урона" << endl;
+        }
 
     }
+
+    if (data.hp <= 0) {
+        cout << "Смертельный урон, ты проиграл" << endl;
+        cout << "1.Загрузить последнее сохранение" << endl;
+        cout << "2.Выйти в главное меню" << endl;
+        cin >> var;
+        
+        if (var == 1) {
+            loadGame(data);
+            cout << "Игра загруженна." << endl;
+        }
+        else {
+            PrintMenu();
+        }
+    }
+    else {
+        cout << "Ты победил! " << endl;
+        int revard = rand() % 50 + 10;
+        data.gold += revard;
+        data.Killmobs++;
+    }
+
 
 }
 
