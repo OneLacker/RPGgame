@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -69,7 +70,7 @@ void Status(Data data) {                                      //статус
 
 }
 
-void battle(Data& data) {
+ void battle(Data& data) {
     int damage;
     int mobsHP = rand() % 50 + 30;
     string mobs[6] = { "Слизень","Оборотень","Огр","Орк","Скелет","призрак" };
@@ -82,65 +83,120 @@ void battle(Data& data) {
         cout << "1.Атаковать" << endl;
         cout << "2.Сбежать(шанс 50%)" << endl;
         cout << "3.Выйти и сохранить" << endl;
-    }
 
-    int var;
-    cin >> var;
-    if (var == 3) {
-        saveGame(data);
-        return;
-    }
-    if (var == 1) {
-        switch (data.gun) {
-        case 0:
-            damage = rand() % 10 + 5;
-            break;
-        case 1:
-            damage = rand() % 15 + 10;
-            break;
-        case 2:
-            damage = rand() % 15 + 20;
-        }
 
-        mobsHP -= damage;
-        cout << "Ты нанес " << damage << " урона" << endl;
-    }
-    else if (var == 2) {
-        if (rand() % 2 == 0) {
-            cout << "удалось сбежать" << endl;
+        int var;
+        cin >> var;
+        if (var == 3) {
+            saveGame(data);
             return;
         }
-        else {
-            cout << "не удалось сбежать, бой продолжается" << endl;
-            int mobDamage = rand() % 20 + 10;
-            data.hp -= mobDamage;
-            cout << "Ты получил " << mobDamage << " урона" << endl;
-        }
-
-    }
-
-    if (data.hp <= 0) {
-        cout << "Смертельный урон, ты проиграл" << endl;
-        cout << "1.Загрузить последнее сохранение" << endl;
-        cout << "2.Выйти в главное меню" << endl;
-        cin >> var;
-        
         if (var == 1) {
-            loadGame(data);
-            cout << "Игра загруженна." << endl;
+            switch (data.gun) {
+            case 0:
+                damage = rand() % 10 + 5;
+                break;
+            case 1:
+                damage = rand() % 15 + 10;
+                break;
+            case 2:
+                damage = rand() % 15 + 20;
+            }
+
+            mobsHP -= damage;
+            cout << "Ты нанес " << damage << " урона" << endl;
+        }
+        else if (var == 2) {
+            if (rand() % 2 == 0) {
+                cout << "удалось сбежать" << endl;
+                return;
+            }
+            else {
+                cout << "не удалось сбежать, бой продолжается" << endl;
+                int mobDamage = rand() % 20 + 10;
+                data.hp -= mobDamage;
+                cout << "Ты получил " << mobDamage << " урона" << endl;
+            }
+
+        }
+
+        if (data.hp <= 0) {
+            cout << "Смертельный урон, ты проиграл" << endl;
+            cout << "1.Загрузить последнее сохранение" << endl;
+            cout << "2.Выйти в главное меню" << endl;
+            cin >> var;
+
+            if (var == 1) {
+                loadGame(data);
+                cout << "Игра загруженна." << endl;
+            }
+            else {
+                PrintMenu();
+            }
         }
         else {
-            PrintMenu();
+            cout << "Ты победил! " << endl;
+            int revard = rand() % 50 + 10;
+            data.gold += revard;
+            data.Killmobs++;
         }
-    }
-    else {
-        cout << "Ты победил! " << endl;
-        int revard = rand() % 50 + 10;
-        data.gold += revard;
-        data.Killmobs++;
+
     }
 
 
+}
+
+
+void Shop(Data& data) {
+    int var;
+    cout << "Ты встретил на пути магазин" << endl;
+    cout << "Торговец: привет путник, что желаешь приобрести?" << endl;
+    cout << "1.Зелье восстановления здоровья" << endl;
+    cout << "2.Мечь" << endl;
+    cout << "3.Лук" << endl;
+    cout << "4.Выход" << endl;
+
+    cin >> var;
+    switch (var) {
+    case 1:
+        if (data.hp == 100) {
+            cout << "Ваше здоровье полное, нельзя восстановить" << endl;
+        }
+        else if (data.hp != 100) {
+            data.hp = data.hp + 20;
+        }
+        else if (data.hp > 100) {
+            data.hp = 100;
+        }
+        battle(data);
+        break;
+    case 2:
+        data.gun = 2;
+        cout << "Ваше новое оружие-мечь" << endl;
+        battle(data);
+        break;
+    case 3:
+        data.gun = 1;
+        cout << "Ваше новое оружие-лук(репчатый)" << endl;
+        battle(data);
+        break;
+    case 4:
+        if (rand() % 2 == 0) {
+            battle(data);
+        }
+        else {
+            cout << "КАК ТЫ ПОСМЕЛ НИЧЕГО НЕ КУПИТЬ?" << endl;
+            data.hp = 1;
+            cout << "Продавец разозлился, ваше здоровье сниженно до 1" << endl;
+        }
+        battle(data);
+        break;
+    }
+}
+
+void Kvest(Data& data) {
+
+    
 }
 
 void PrintMenu(){
@@ -152,18 +208,46 @@ void PrintMenu(){
     cout << "Выберите пункт меню: " << endl;
 }
 
+void NPC() {
+    cout << "....." << endl;
+    cout << "ты должен выполнить несколько заданий, первое из них - убить 10 монстров" << endl;
+    cout << "выбери направление, куда хочешь пойти: " << endl;
+    cout << "1.пойти налево" << endl;
+    cout << "2.пойти направо" << endl;
+}
+
 int main() {
 
 
     setlocale(LC_ALL, "ru");
     int num=0;
+    int doroga=0;
+    Data playerData;
     while (true) {
         system("cls");
         PrintMenu();
         cin >> num;
         switch (num) {
         case 1: {
+            playerData.name;
+            cout << "Придумай имя персонажа: " << endl;
+            cin >> playerData.name;
+            playerData.hp = 100;
+            playerData.gold = 0;
+            playerData.Killmobs = 0;
+            playerData.gun = 0;
 
+            NPC();
+            cin >> doroga;
+            if (doroga == 1) {
+                battle(playerData);
+            }
+            else if (doroga == 2) {
+                battle(playerData);
+            }
+            else {
+                cout << "есть только две дороги!" << endl;
+            }
             break;
         }
         case 2: {
