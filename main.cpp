@@ -14,7 +14,6 @@ struct Data {
     int Killmobs;
 };
 
-
 void saveGame(Data data) {                         //сохранение
     ofstream saveFile("savegame.txt");
     if (saveFile.is_open()) {
@@ -61,28 +60,27 @@ void NPC(Data& data) {
             break;
         case 15 :
             cout<<"Ты молодец, потратил время впустую и прошел игру!"<<endl;
-            saveGame(<#Data data#>);
+            saveGame(data);
             system("clear");
     }
-//    cout << "ты должен выполнить несколько заданий, первое из них - убить 10 монстров" << endl;
     cout << "выбери направление, куда хочешь пойти: " << endl;
-    cout << "1.пойти налево" << endl;
-    cout << "2.пойти направо" << endl;
+    cout << "1.пойти налево "<<endl;
+    cout << "2.пойти направо "<<endl;
 }
 
 void Kvest(Data& data) {
     switch (data.Killmobs) {
         case 5 :
             cout<<"Ты выполнил первый квест! "<<endl;
-            NPC(<#Data &data#>)
+            NPC(data);
             break;
         case 10 :
             cout<<"Ты выполнил второй квест! "<<endl;
-            NPC(<#Data &data#>)
+            NPC(data);
             break;
         case 15 :
             cout<<"Ты выполнил третий квест! "<<endl;
-            NPC(<#Data &data#>)
+            NPC(data);
             break;
     }
 }
@@ -118,6 +116,20 @@ void PrintMenu(){
     cout << "Выберите пункт меню: ";
 }
 
+//enum location {
+//    FOREST, CAVE, VILLAGE, DUNGEON
+//};
+//Location currentLocation;
+//void explore(Data& data) {
+//    swith(currentLocation) {
+//    case FOREST:
+//    
+//    break;
+//    }
+//}
+
+
+
 void battle(Data& data) {
     int damage=0;
     int mobsHP = rand() % 50 + 30;
@@ -126,8 +138,9 @@ void battle(Data& data) {
     cout << "На тебя напал " << mob << endl;
 
     while (mobsHP > 0 && data.hp > 0) {
-        cout << "Твое здоровье: " << data.hp << endl;
-        cout << "Здоровье врага: " << mobsHP << endl;
+        cout << "Твое здоровье: " << data.hp << "              " << "Здоровье врага: " << mobsHP << endl;
+        cout<<""<<endl;
+//        cout << "Здоровье врага: " << mobsHP << endl;
         cout << "1.Атаковать" << endl;
         cout << "2.Сбежать(шанс 50%)" << endl;
         cout << "3.Выйти и сохранить" << endl;
@@ -143,20 +156,23 @@ void battle(Data& data) {
         if (var == 1) {
             switch (data.gun) {
                 case 0:
-                    damage = rand() % 10 + 5;
+                    damage = rand() % 14 + 5;
                     break;
                 case 1:
-                    damage = rand() % 15 + 10;
+                    damage = rand() % 25 + 10;
                     break;
                 case 2:
-                    damage = rand() % 15 + 20;
+                    damage = rand() % 20 + 20;
                     break;
+                default :
+                    cout<<"Ошибка, выберите существующий вариант действия"<<endl;
+                    cin>>var;
             }
             
             mobsHP -= damage;
             cout << "Ты нанес " << damage << " урона" << endl;
             
-            // моб умер с одной атаки
+            // смерть моба
             if (mobsHP <= 0) {
                 cout << "Ты победил! " << endl;
                 int reward = rand() % 50 + 10;
@@ -191,7 +207,6 @@ void battle(Data& data) {
         else if (var == 2) {
             if (rand() % 2 == 0) {
                 cout << "Удалось сбежать" << endl;
-                return;
             }
             else {
                 cout << "Не удалось сбежать, бой продолжается" << endl;
@@ -219,6 +234,9 @@ void battle(Data& data) {
     }
 }
 
+void Inventory(Data& data) {
+    
+}
 
 void Shop(Data& data) {
     int var;
@@ -228,7 +246,6 @@ void Shop(Data& data) {
     cout << "2.Мечь" << endl;
     cout << "3.Лук" << endl;
     cout << "4.Выход" << endl;
-
 
     
     cin >> var;
@@ -257,6 +274,7 @@ void Shop(Data& data) {
         break;
     case 4:
         if (rand() % 2 == 0) {
+            cout<<"Вы вышли из магазина."<<endl;
             battle(data);
         }
         else {
@@ -266,45 +284,13 @@ void Shop(Data& data) {
         }
         battle(data);
         break;
+        default :
+            cout<<"Ошибка, выберите существующий вариант действия"<<endl;
+            Shop(data);
     }
 }
 
-//void Kvest(Data& data) {
-//    switch (data.Killmobs) {
-//        case 5 :
-//            cout<<"Ты выполнил первый квест! "<<endl;
-//            NPC();
-//            break;
-//        case 10 :
-//            cout<<"Ты выполнил второй квест! "<<endl;
-//            NPC();
-//            break;
-//        case 15 :
-//            cout<<"Ты выполнил третий квест! "<<endl;
-//            NPC();
-//            break;
-//    }
-//}
-
-//void PrintMenu(){
-//    cout << "|===========МЕНЮ===========|" << endl;
-//    cout << "|1.Новая игра              |" << endl;
-//    cout << "|2.Продолжить              |" << endl;
-//    cout << "|3.Выход                   |" << endl;
-//    cout << "|==========================|" << endl;
-//    cout << "Выберите пункт меню: ";
-//}
-
-//void NPC() {
-//    cout << "....." << endl;
-//    cout << "ты должен выполнить несколько заданий, первое из них - убить 10 монстров" << endl;
-//    cout << "выбери направление, куда хочешь пойти: " << endl;
-//    cout << "1.пойти налево" << endl;
-//    cout << "2.пойти направо" << endl;
-//}
-
 int main() {
-
 
     setlocale(LC_ALL, "ru");
     int num=0;
@@ -312,6 +298,7 @@ int main() {
     Data playerData;
     while (true) {
         system("cls");
+        system("clear");
         PrintMenu();
         cin >> num;
         switch (num) {
@@ -323,7 +310,7 @@ int main() {
             playerData.Killmobs = 0;
             playerData.gun = 0;
 
-            NPC(<#Data &data#>);
+            NPC(playerData);
             cin >> doroga;
             if (doroga == 1) {
                 battle(playerData);
@@ -341,13 +328,15 @@ int main() {
             break;
         }
         case 3: {
-
+            exit(0);
             break;
         }
         default:
             cout << "ошибка, такого пункта меню не существует" << endl;
+                break;
 
         }
 
     }
 }
+
