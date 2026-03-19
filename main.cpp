@@ -35,15 +35,15 @@ map<LocationType, Location> locations;
 
 void initLocations() {
     locations[FOREST] = {"Лес", "Густой лес с высокими деревьями и таинственными звуками",
-                         {"Лесной тролль", "Волк", "Гоблин", "Паук-гигант"}};
+                         {"Лесной тролль", "Оборотень", "Гоблин", "Паук-гигант"}};
     locations[CAVE] = {"Пещера", "Темная и сырая пещера с капающей водой",
                        {"Летучая мышь", "Гоблин", "Каменный голем", "Подземный червь"}};
     locations[SWAMP] = {"Болото", "Гнилостное болото с туманом и странными огоньками",
-                        {"Болотный тролль", "Гигантская пиявка", "Болотный дух", "Крокодил"}};
+                        {"Болотный тролль", "Гигантская пиявка", "Болотный дух", "Крокодаил"}};
     locations[RUINS] = {"Руины", "Древние руины когда-то великого города",
                         {"Скелет", "Призрак", "Архитектор руин", "Древний страж"}};
     locations[MOUNT] = {"Горы", "Высокие заснеженные горы с опасными тропами",
-                            {"Снежный йети", "Горный тролль", "Орел-хищник", "Ледяной элементаль"}};
+                            {"Снежный йети", "Горный тролль", "Хищный орел", "Ледяной элементаль"}};
 }
 
 LocationType getRandomLocation() {
@@ -83,7 +83,7 @@ bool loadGame(Data &data) {
 }
 
 void NPC(Data& data) {
-    cout << "....." << endl;
+    cout << "   " << endl;
     switch (data.Killmobs) {
         case 0:
             cout << "Твое первое задание - убить 5 монстров" << endl;
@@ -141,6 +141,16 @@ void Status(Data data) {
     }
 }
 
+void What() {
+    cout << "\n======================================" << endl;
+    cout << "Куда дальше?" << endl;
+    cout << "1. Проверить статус" << endl;
+    cout << "2. Пойти дальше (новая случайная локация)" << endl;
+    cout << "3. Зайти в магазин" << endl;
+    cout << "4. Сохранить и выйти в главное меню" << endl;
+    cout << "======================================" << endl;
+}
+
 void PrintMenu(){
     cout << "|===========МЕНЮ===========|" << endl;
     cout << "|1. Новая игра             |" << endl;
@@ -158,19 +168,19 @@ void battle(Data& data, LocationType locationType) {
     cout << "Вы прибыли в локацию: " << location.name << endl;
     cout << location.description << endl;
     cout << "======================================\n" << endl;
-
+    
     int damage = 0;
     int mobsHP = rand() % 50 + 30;
     string mob = getRandomEnemy(locationType);
-    cout << "На тебя напал " << mob << " из локации " << location.name << "!" << endl;
-
+    cout << "На тебя напал " << mob << "!" << endl;
+    
     while (mobsHP > 0 && data.hp > 0) {
         cout << "Твое здоровье: " << data.hp << "               " << "Здоровье врага: " << mobsHP <<endl;
         cout << "" << endl;
         cout << "1. Атаковать" << endl;
         cout << "2. Сбежать (шанс 50%)" << endl;
         cout << "3. Выйти и сохранить" << endl;
-
+        
         int var;
         cin >> var;
         
@@ -245,9 +255,9 @@ void battle(Data& data, LocationType locationType) {
                     if (var == 1) {
                         loadGame(data);
                         cout << "Игра загружена." << endl;
-                        return;
+                        
                     } else {
-                        return;
+                        PrintMenu();
                     }
                 }
             }
@@ -302,6 +312,11 @@ void Shop(Data& data) {
             break;
         case 4:
             cout << "Вы вышли из магазина." << endl;
+        {
+            LocationType randomLoc = getRandomLocation();
+            battle(data, randomLoc);
+            
+        }
             return;
         default:
             cout << "Ошибка, выберите существующий вариант действия" << endl;
@@ -323,19 +338,19 @@ int main() {
     Data playerData;
 
     while (true) {
-        system("cls");
+        system("clear");
         PrintMenu();
         cin >> num;
-
+        
         switch (num) {
             case 1: {
                 cout << "Придумай имя персонажа: ";
                 cin >> playerData.name;
                 playerData.hp = 100;
-                playerData.gold = 50;
+                playerData.gold = 10;
                 playerData.Killmobs = 0;
                 playerData.gun = 0;
-
+                
                 NPC(playerData);
                 int doroga;
                 cin >> doroga;
@@ -359,39 +374,54 @@ int main() {
                 cout << "Ошибка, такого пункта меню не существует" << endl;
                 break;
         }
-
+        
         // окно выбора после битвы
-        cout << "\n======================================" << endl;
+        What();
         int choice;
-        cout << "Куда дальше?" << endl;
-        cout << "1. Проверить статус" << endl;
-        cout << "2. Пойти дальше (новая случайная локация)" << endl;
-        cout << "3. Зайти в магазин" << endl;
-        cout << "4. Сохранить и выйти в главное меню" << endl;
-        cout << "======================================" << endl;
-
         cin >> choice;
-
-        switch (choice) {
-            case 1:
-                Status(playerData);
-                break;
-            case 2: {
-                // нова я рандом лока
-                LocationType randomLocation = getRandomLocation();
-                battle(playerData, randomLocation);
-                break;
+        
+        while (true) {
+            
+            switch (choice) {
+                case 1:
+                    Status(playerData);
+                    PrintMenu();
+                    cin >>choice;
+                    if (choice == 1) {
+                        LocationType randomLocation = getRandomLocation();
+                        battle(playerData, randomLocation);
+                    }
+                    else if (choice == 2) {
+                        LocationType randomLocation = getRandomLocation();
+                        battle(playerData, randomLocation);
+                        What();
+                        cin >> choice;
+                        return 0;
+                    }
+                    else if (choice == 3) {
+                        return 0;
+                    }
+                    break;
+                case 2: {
+                    // новая рандом лока
+                    LocationType randomLocation = getRandomLocation();
+                    battle(playerData, randomLocation);
+                    break;
+                }
+                case 3:
+                    Shop(playerData);
+                    break;
+                case 4:
+                    saveGame(playerData);
+                    continue; //главное меню
+                default:
+                    cout << "Неверный выбор" << endl;
+                    break;
             }
-            case 3:
-                Shop(playerData);
-                break;
-            case 4:
-                saveGame(playerData);
-                continue; //главное меню
-            default:
-                cout << "Неверный выбор" << endl;
         }
+        
     }
-
-    return 0;
+        
+        
+        return 0;
 }
